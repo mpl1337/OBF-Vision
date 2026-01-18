@@ -1,0 +1,267 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title data-i18n="page_title">OBF – Vision AI Server</title>
+  <link rel="stylesheet" href="/static/style.css?v=1">
+  <script src="/static/script.js?v=1" defer></script>
+</head>
+<body>
+<div class="wrap">
+  <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:12px;">
+    <h1 data-i18n="header_title">OBF – YOLOv8+11 (OpenVINO) + Face/ReID</h1>
+        <button id="btnTheme" class="btn" onclick="toggleTheme()" data-i18n="btn_theme">🌗 Theme</button>
+    <div class="lang-switch">
+      <span class="lang-opt" onclick="setLanguage('de')" id="lang_de">DE</span>
+      <span class="sep">|</span>
+      <span class="lang-opt" onclick="setLanguage('en')" id="lang_en">EN</span>
+    </div>
+  </div>
+
+<div class="tabs">
+    <button class="tab-btn active" onclick="showTab('dashboard')" data-i18n="tab_dash">Dashboard</button>
+    <button class="tab-btn" onclick="showTab('models')" data-i18n="tab_models">Model Manager</button>
+    <button class="tab-btn" onclick="showTab('benchmark')" data-i18n="tab_bench">Benchmark</button>
+    <button class="tab-btn" onclick="showTab('clusters')" data-i18n="tab_clusters">Unknown Clusters</button>
+</div>
+
+  <div id="tab-dashboard" class="tab-content active">
+     <div class="grid">
+        <div class="card">
+          <div class="row" style="justify-content:space-between;">
+            <div>
+              <div class="pill"><b data-i18n="status_label">Status</b><div id="statusDot" class="live-dot" style="display:none; margin-right:4px;"></div><span id="statusText" class="mono">...</span></div>
+
+              <div class="pill"><b data-i18n="uptime_label">Up</b> <span id="uptimeText" class="mono">-</span></div>
+            </div>
+            <div class="row">
+              <button class="btn ok" onclick="startPipeline()" data-i18n="btn_start">Start</button>
+              <button class="btn bad" onclick="stopPipeline()" data-i18n="btn_stop">Stop</button>
+              <button class="btn bad" style="margin-left:5px; background-color:#b91c1c; border-color:#b91c1c;" onclick="hardRestart(this)" data-i18n-title="btn_restart" title="Restart">↺</button>
+            </div>
+          </div>
+          <div class="controls" style="margin-top:12px;">
+            <div class="row">
+              <div class="pill"><span data-i18n="req_label">Reqs:</span> <span id="p_req" class="mono">0</span></div>
+              <div class="pill" data-i18n-title="perf_ema_title" title="EMA ms (avg)">Ø: <span id="p_ema" class="mono">0</span> ms</div>
+              <div class="pill" data-i18n-title="perf_last_title" title="Last inference time"><span data-i18n="label_last_short">Last:</span> <span id="p_last" class="mono">0</span> ms</div>
+              <div class="pill" data-i18n-title="perf_fps_title" title="Inferences per second">FPS: <span id="p_ips" class="mono">0.0</span></div>
+            </div>
+            <div class="muted" style="margin-top:5px;"><span data-i18n="last_labels">Last:</span> <span id="p_labels" class="mono">-</span></div>
+          </div>
+        </div>
+
+        <div class="card">
+            <div class="row" style="justify-content:space-between; margin-bottom:8px;">
+                <div class="pill"><b data-i18n="models_label">Active Models</b></div>
+                <button class="btn ghost" onclick="reloadModels()" style="font-size:11px; padding:4px 8px;">↻</button>
+            </div>
+            <div id="modelSummaryBox" class="controls" style="font-size:12px;" data-i18n="loading">Loading...</div>
+            <div id="modelRuntimeBox" class="controls" style="font-size:12px; margin-top:10px;"></div>
+        </div>
+
+        <div class="card full">
+          <div class="row" style="justify-content:space-between;">
+            <div>
+              <div class="pill"><b data-i18n="params_label">Konfiguration</b></div>
+              <div class="muted" style="margin-top:8px;" data-i18n="params_desc">Config...</div>
+            </div>
+            <div class="row">
+              <button class="btn ok" onclick="saveAndApply()" data-i18n="btn_save_apply">Save & Apply</button>
+            </div>
+          </div>
+
+          <div class="muted" style="margin:10px 0 6px;"><b data-i18n="params_basic_label">Basic</b></div>
+          <div id="paramBasicBox" class="controls"></div>
+
+          <details id="advConfigDetails" style="margin-top:12px;">
+            <summary class="muted" data-i18n="params_advanced_label">Advanced config</summary>
+            <div style="height:10px;"></div>
+            <div id="paramAdvancedBox" class="controls"></div>
+          </details>
+        </div>
+
+        <div class="card full">
+          <div class="row" style="justify-content:space-between; align-items:flex-start; gap:10px; flex-wrap:wrap;">
+  <div>
+    <div class="pill"><b data-i18n="unknown_label">Gesichter</b></div>
+    <div id="reid_status_box" class="pill" style="display:none; margin-left:10px; border:1px solid transparent;"></div>
+
+    <div id="faceDbStats" class="mono small" style="margin-top:8px; color:var(--acc); display:flex; gap:10px; align-items:center;">
+      <span data-i18n="facedb_loading">Lade DB Status...</span>
+    </div>
+
+    <div class="muted" style="margin-top:8px;" data-i18n="unknown_desc">Drag & Drop.</div>
+  </div>
+
+  <div class="row" style="gap:8px;">
+    <button id="btnBuildDb" class="btn ok" onclick="startEnrollBuild()" data-i18n="btn_build">Datenbank neu berechnen</button>
+    <button class="btn ghost" onclick="clearEnrollLog()" data-i18n="btn_clear_log">Logdatei leeren</button>
+    <select id="unknownFilter" onchange="filterUnknowns()" style="padding:4px 8px; width:120px; display:none;">
+      <option value="ALL" data-i18n="unknown_filter_all">All Sources</option>
+    </select>
+
+    <button class="btn bad" onclick="clearUnknowns()" data-i18n="btn_del_all">Alle verwerfen</button>
+    <button class="btn ghost" onclick="reloadUnknown()" data-i18n="btn_refresh">Liste aktualisieren</button>
+  </div>
+</div>
+  <div class="muted" style="margin-top:10px;" data-i18n="unknown_hint">
+    Wichtig: Nach Zuweisungen muss die Datenbank neu berechnet werden („Datenbank neu berechnen“).
+  </div>
+<pre id="enrollLog" class="mono" style="max-height:220px;"></pre>
+
+  <div class="sticky-zones">
+    <div class="new-person-row">
+      <input id="newPersonName" class="new-person" type="text" data-i18n-placeholder="new_person_placeholder" placeholder="..." />
+      <button class="btn ok" onclick="addPerson()" data-i18n="btn_add_person">+ Neue Person</button>
+    </div>
+    <div class="dropzones" id="peopleDrops"></div>
+  </div>
+
+  <div class="thumbs" id="unknownZone"></div>
+</div>
+
+
+        <div class="card full">
+          <div class="row" style="justify-content:space-between;">
+            <div><div class="pill"><b data-i18n="test_label">Quick Test</b></div><div class="muted" style="margin-top:8px;" data-i18n="test_desc">Check Analysis.</div></div>
+          </div>
+          <div class="row" style="margin-top:10px; border-bottom:1px dashed rgba(255,255,255,0.1); padding-bottom:10px; margin-bottom:10px;">
+            <div class="muted" style="width:100px;" data-i18n="qt_image">Image:</div><input id="testFile" type="file" accept="image/*" />
+            <button class="btn" onclick="runTest()" data-i18n="btn_run_vis">Analyze</button>
+            <div class="muted" style="width:100px; margin-left:15px;" data-i18n="qt_video">Video:</div><input id="videoFile" type="file" accept="video/mp4,video/*" style="flex:1" />
+            <button id="btnVideo" class="btn" onclick="runVideoTest()" data-i18n="btn_upload_play">Upload</button>
+            <button id="btnVideoPause" onclick="pauseVideoTest()" disabled data-i18n="btn_pause">Pause</button>
+          </div>
+          <div class="row" style="margin-top:10px;">
+            <div class="muted" style="width:100px;" data-i18n="qt_rtsp">RTSP:</div><input id="rtspUrl" type="text" data-i18n-placeholder="qt_rtsp_placeholder" placeholder="rtsp://..." style="flex:1" />
+            <button id="btnStream" class="btn" onclick="toggleStream()" data-i18n="btn_start_stream">Stream</button>
+          </div>
+          <div class="row" style="margin-top:10px;"><div class="muted" style="width:100px;" data-i18n="qt_min_conf">Min Conf:</div><input id="testMinConf" type="text" value="0.40" style="width:90px" /></div>
+<div class="test-stream-grid">
+  <div class="stream-box">
+    <div class="stream-frame">
+      <canvas id="testCanvas" style="max-width:100%; height:auto; display:none;"></canvas>
+      <img id="streamDisplay" style="width:100%; height:auto; display:none;" />
+    </div>
+
+    <pre id="testOut" class="mono" style="margin-top:10px;"></pre>
+  </div>
+
+  <div class="perf-side">
+    <div class="pill"><b data-i18n="live_label">Live</b></div>
+
+    <div class="row" style="margin-top:8px; flex-wrap:wrap;">
+      <div class="pill"><span data-i18n="label_reqs_short">Reqs:</span> <span id="p_req_side" class="mono">0</span></div>
+      <div class="pill">Ø: <span id="p_ema_side" class="mono">0</span> ms</div>
+      <div class="pill"><span data-i18n="label_last_short">Last:</span> <span id="p_last_side" class="mono">0</span> ms</div>
+      <div class="pill" style="border-color:rgba(59,130,246,0.5); background:rgba(59,130,246,0.1);">
+        FPS: <span id="p_ips_side" class="mono">0.0</span> inf/s
+      </div>
+    </div>
+
+    <div class="muted" style="margin-top:8px;">
+      <span data-i18n="label_last_short">Last:</span> <span id="p_labels_side" class="mono">-</span>
+    </div>
+  </div>
+</div>
+        </div>
+     </div>
+  </div>
+
+  <div id="tab-models" class="tab-content">
+    <div class="card">
+        <div class="row" style="justify-content:space-between; margin-bottom:15px;">
+            <div>
+              <h2 style="margin:0" data-i18n="manager_title">Library</h2>
+              <div class="muted">
+                <span data-i18n="manager_intro">Select & Download.</span>
+                | <b id="modelStorageInfo" style="color: var(--ok);"></b>
+              </div>
+            </div>
+            <div class="row">
+              <button class="btn ok" onclick="downloadSelectedModels()" data-i18n="btn_dl_selected">Download Selected</button>
+              <button id="btnRestartModels" class="btn bad" onclick="hardRestart(this)" data-i18n="btn_restart" title="Restart">Restart</button>
+              <button class="btn ghost" onclick="reloadModels()" data-i18n="btn_refresh">Refresh</button>
+          </div>
+        </div>
+        <div id="modelListContainer" data-i18n="loading">Loading...</div>
+        <div style="margin-top:20px;">
+            <div class="row" style="justify-content:space-between; margin-bottom:5px;">
+              <b class="muted" data-i18n="install_log_label">Installation Log</b>
+              <button class="btn ghost" style="padding:2px 8px; font-size:11px;" onclick="clearModelLog()" data-i18n="btn_clear_log">Clear</button>
+            </div>
+            <pre id="modelLog" class="mono" style="max-height:200px;"></pre>
+        </div>
+    </div>
+  </div>
+
+<div id="tab-benchmark" class="tab-content">
+    <div class="card">
+        <div id="benchProgressContainer" style="display:none; margin: 20px 0; background: #333; border-radius: 8px; overflow: hidden;">
+            <div id="benchProgressBar" style="width: 0%; height: 25px; background: #0078d4; text-align: center; line-height: 25px; color: white; transition: width 0.3s;">
+            0%
+            </div>
+        </div>
+
+        <div class="row" style="justify-content:space-between; margin-bottom:15px;">
+            <div>
+                <h2 style="margin:0" data-i18n="bench_title">Hardware Matrix Benchmark</h2>
+                <div class="muted" data-i18n="bench_desc">Vergleicht die Geschwindigkeit (Latenz) über alle verfügbaren Recheneinheiten.</div>
+            </div>
+            <div class="row" style="gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+              <button id="benchHighlightToggle" class="btn ghost" type="button" onclick="toggleBenchHighlight()">Highlight: L</button>
+              <button class="btn ok" type="button" onclick="runBenchmark()" data-i18n="btn_start_bench">Vollständigen Test starten</button>
+            </div>
+        </div>
+
+
+
+        <table class="mod-table">
+            <thead>
+                <tr id="benchHeaderRow">
+                    <th data-i18n="col_model">Modell</th>
+                </tr>
+            </thead>
+            <tbody id="benchResultsBody">
+                 <tr><td colspan="4" class="muted" data-i18n="bench_hint">Klicke auf Start, um den Test zu beginnen...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</div>
+
+</div> <div id="personModal" class="modal-overlay" style="display:none;">
+  <div class="modal-window">
+    <div class="modal-header">
+      <h2 id="pmTitle" style="margin:0;" data-i18n="pm_person">Person</h2>
+      <button class="btn ghost" onclick="closePersonModal()">X</button>
+    </div>
+    <div class="modal-body"><div id="pmGrid" class="thumbs"></div></div>
+    <div class="modal-footer muted" data-i18n="modal_hint">Click Red X to delete single image.</div>
+  </div>
+</div>
+<div id="toast" class="toast"></div>
+
+<div id="tab-clusters" class="tab-content">
+  <div class="card">
+    <div class="row" style="justify-content:space-between; align-items:center; flex-wrap:wrap;">
+      <h2 style="margin:0;" data-i18n="uc_title">Unknown Clusters</h2>
+      <div class="row" style="gap:10px; flex-wrap:wrap;">
+        <label class="pill"><span data-i18n="uc_sim_thres">sim_thres</span> <input id="uc_sim" class="input" type="number" step="0.01" min="0.50" max="0.95" value="0.75" style="width:90px;"></label>
+        <label class="pill"><span data-i18n="uc_min_size">min_size</span> <input id="uc_minsz" class="input" type="number" step="1" min="2" max="50" value="2" style="width:70px;"></label>
+        <label class="pill"><span data-i18n="uc_limit">limit</span> <input id="uc_limit" class="input" type="number" step="100" min="200" max="5000" value="2000" style="width:90px;"></label>
+        <button id="uc_reload" class="btn ok" onclick="loadUnknownClusters()" data-i18n="uc_reload">Reload</button>
+      </div>
+    </div>
+    <div id="uc_stats" class="muted" style="margin-top:8px;">—</div>
+    <div id="uc_grid" class="grid" style="grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); margin-top:12px;"></div>
+    <div class="muted" style="margin-top:10px; font-size:12px;" data-i18n="uc_hint">
+      Hinweis: Clustering nutzt gespeicherte .npy-Embeddings...
+    </div>
+  </div>
+</div>
+</body>
+</html>
