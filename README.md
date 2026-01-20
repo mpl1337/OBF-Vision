@@ -8,6 +8,7 @@
   -> Enable "Add python.exe to PATH"
 - **Intel NPU Driver (Only on CPUs with NPU (Intel® Core™ Ultra))**
 - **Microsoft Visual C++ Redistributable (x64)**
+- **Git for Windows** (needed to clone the repo)
 
 <img width="654" height="458" alt="image" src="https://github.com/user-attachments/assets/17d772ab-4f56-4d15-bf34-25060b6e85ff" />
 
@@ -16,23 +17,39 @@ Downloads:
 - Python 3.11.9: https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe  
 - Intel NPU Driver: https://www.intel.de/content/www/de/de/download/794734/intel-npu-driver-windows.html  
 - VC++ Redist (x64): https://aka.ms/vs/17/release/vc_redist.x64.exe  
+- Git for Windows: https://git-scm.com/downloads/win
 
 ---
 
+### 2) Clone the repository (into `C:\OBF`)
+Open **PowerShell (Admin)**:
+- **Win + X** → **A**
 
-### 2) Create a virtual environment + install dependencies
-Open **PowerShell** in the project folder and run:
+Then run:
+
+```powershell
+New-Item -ItemType Directory -Force -Path "C:\OBF" | Out-Null
+Set-Location "C:\OBF"
+git clone https://github.com/mpl1337/OBF-Vision
+Set-Location "C:\OBF\OBF-Vision"
+```
+
+---
+
+### 3) Create a virtual environment + install dependencies
+In PowerShell (inside `C:\OBF\OBF-Vision`) run:
 
 ```powershell
 py -3.11 -m venv obf
-.\obf\Scripts\activate
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+.\obf\Scripts\Activate.ps1
 python -m pip install -U pip
 pip install -r requirements.txt
 ```
 
 ---
 
-### 3) Start the app
+### 4) Start the app
 ```powershell
 python start.py
 ```
@@ -54,12 +71,12 @@ INFO uvicorn: connection open
 
 ---
 
-### 4) Open the GUI
+### 5) Open the GUI
 - http://localhost:32168/gui
 
 ---
 
-### 5) Download models and prepare the Face DB
+### 6) Download models and prepare the Face DB
 1. **Model Manager**
    - Select models: `yolo11s`, `yolov8n-face`, `w600k_mbf`
    - Start **Download Selected**
@@ -74,18 +91,18 @@ INFO uvicorn: connection open
 
 ---
 
-### 6) Enable the pipeline
-- **Dashboard** → enable "AI Pipeline Master Switch" → **Save & restart server**
+### 7) Enable the pipeline
+- **Dashboard** → enable "AI Pipeline Master Switch" & Choose Devices (CPU/GPU/NPU) → **Save & restart server**
 
 ---
 
-### 7) Adjust settings
+### 8) Adjust settings
 - Change settings in the GUI as needed
 - After **Save & Apply** it will performe a restart
 
 ---
 
-### 8) Test it
+### 9) Test it
 - Use **Quicktest** and run a few images through it
 
 ---
@@ -126,30 +143,49 @@ See `LICENSE` and any additional notes in the repository.
 ## Installation (Windows)
 
 ### 1) Voraussetzungen
-- **Python 3.11.9 (x64) (neuere versionen nicht getestet)**
-- **Intel NPU Driver (Windows)**
+- **Python 3.11.9 (x64) (neuere Versionen nicht getestet)**
+  -> Beim Installer "Add python.exe to PATH" aktivieren
+- **Intel NPU Driver (nur bei CPUs mit NPU (Intel® Core™ Ultra))**
 - **Microsoft Visual C++ Redistributable (x64)**
+- **Git for Windows** (zum Klonen des Repos)
 
 Downloads:
 - Python 3.11.9: https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe  
 - Intel NPU Driver: https://www.intel.de/content/www/de/de/download/794734/intel-npu-driver-windows.html  
 - VC++ Redist (x64): https://aka.ms/vs/17/release/vc_redist.x64.exe  
+- Git for Windows: https://git-scm.com/downloads/win
 
 ---
 
-### 2) Virtuelle Umgebung erstellen + Dependencies installieren
-Öffne **PowerShell** im Projektordner und führe aus:
+### 2) Repository klonen (nach `C:\OBF`)
+Öffne **PowerShell (Administrator)**:
+- **Win + X** → **A**
+
+Dann ausführen:
+
+```powershell
+New-Item -ItemType Directory -Force -Path "C:\OBF" | Out-Null
+Set-Location "C:\OBF"
+git clone https://github.com/mpl1337/OBF-Vision
+Set-Location "C:\OBF\OBF-Vision"
+```
+
+---
+
+### 3) Virtuelle Umgebung erstellen + Dependencies installieren
+In PowerShell (im Ordner `C:\OBF\OBF-Vision`) ausführen:
 
 ```powershell
 py -3.11 -m venv obf
-.\obf\Scripts\activate
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+.\obf\Scripts\Activate.ps1
 python -m pip install -U pip
 pip install -r requirements.txt
 ```
 
 ---
 
-### 3) App starten
+### 4) App starten
 ```powershell
 python start.py
 ```
@@ -171,19 +207,19 @@ INFO uvicorn: connection open
 
 ---
 
-### 4) GUI öffnen
+### 5) GUI öffnen
 - http://localhost:32168/gui
 
 ---
 
-### 5) Modelle herunterladen und Face-DB vorbereiten
+### 6) Modelle herunterladen und Face-DB vorbereiten
 1. **Model Manager**
    - Modelle auswählen: `yolo11s`, `yolov8n-face`, `w600k_mbf`
-   - **Download** starten
-   - Warten, bis der Download **ohne Fehler** abgeschlossen ist, danach neustarten
+   - **Auswahl hrunterladen** starten
+   - Warten, bis der Job fertig ist, dann Server neustarten
 
 2. **Unknown Faces**
-   - Dashboard -> Gesichter -> "Name der Person" -> "+ Neue Person"
+   - Dashboard -> Gesichter -> "Name für neue Person" -> "+ Neue Person"
 
 3. **Face DB Tools**
    - **Datenbank neu berechnen** starten
@@ -191,18 +227,18 @@ INFO uvicorn: connection open
 
 ---
 
-### 6) Pipeline aktivieren
-- **Dashboard** → "KI-Pipeline Hauptschalter" aktivieren → **Speichern & Server neustarten**
+### 7) Pipeline aktivieren
+- **Dashboard** → "AI Pipeline Master Switch" aktivieren & Hardware wählen (CPU/GPU/NPU) → **Speichern & Server neustarten**
 
 ---
 
-### 7) Einstellungen anpassen
+### 8) Einstellungen anpassen
 - In der GUI die gewünschten Einstellungen setzen
-- Nach **Save & Apply** ggf. **Restart** durchführen
+- Nach **Save & Apply** wird ggf. ein Restart ausgeführt
 
 ---
 
-### 8) Testen
+### 9) Testen
 - **Quicktest** verwenden und ein paar Testbilder durchlaufen lassen
 
 ---
@@ -241,4 +277,3 @@ Siehe `LICENSE` und ggf. Hinweise im Repository.
 <img width="1920" height="1163" alt="screencapture-192-168-178-70-32168-gui-2026-01-20-19_52_35" src="https://github.com/user-attachments/assets/56350358-5c88-4b09-93d4-55229baddbb6" />
 
 <img width="1920" height="963" alt="screencapture-192-168-178-70-32168-gui-2026-01-20-20_00_45" src="https://github.com/user-attachments/assets/68378b4c-aafb-495f-a96c-050007128e48" />
-
