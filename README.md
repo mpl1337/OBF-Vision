@@ -5,8 +5,12 @@
 
 ### 1) Requirements
 - **Python 3.11.9 (x64) (newer not tested)**
-- **Intel NPU Driver (Windows)**
+  -> Enable "Add python.exe to PATH"
+- **Intel NPU Driver (Only on CPUs with NPU (Intel® Core™ Ultra))**
 - **Microsoft Visual C++ Redistributable (x64)**
+
+<img width="654" height="458" alt="image" src="https://github.com/user-attachments/assets/17d772ab-4f56-4d15-bf34-25060b6e85ff" />
+
 
 Downloads:
 - Python 3.11.9: https://www.python.org/ftp/python/3.11.9/python-3.11.9-amd64.exe  
@@ -14,6 +18,7 @@ Downloads:
 - VC++ Redist (x64): https://aka.ms/vs/17/release/vc_redist.x64.exe  
 
 ---
+
 
 ### 2) Create a virtual environment + install dependencies
 Open **PowerShell** in the project folder and run:
