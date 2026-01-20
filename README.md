@@ -117,7 +117,11 @@ Path:
 - Camera Settings → **AI**
   - Enable **Additional models**
   - Enable **Override global list**
-  - Set a unique model name per camera
+  - Set your cameraname as model
+
+<img width="716" height="661" alt="1768749353832" src="https://github.com/user-attachments/assets/0f75b1f6-dc49-4384-bfe5-7aea30c61d65" />
+<img width="695" height="668" alt="1768749437206" src="https://github.com/user-attachments/assets/7e52b3c9-7ab5-4559-a37a-879f0ad2e736" />
+
 
 ---
 
@@ -253,7 +257,10 @@ Pfad:
 - Camera Settings → **AI**
   - **Additional models** aktivieren
   - **Override global list** aktivieren
-  - Ein eindeutiger Modellname pro Kamera vergeben
+  - Namen der Kamera als Modell übernehmern.
+ 
+<img width="716" height="661" alt="1768749353832" src="https://github.com/user-attachments/assets/0f75b1f6-dc49-4384-bfe5-7aea30c61d65" />
+<img width="695" height="668" alt="1768749437206" src="https://github.com/user-attachments/assets/7e52b3c9-7ab5-4559-a37a-879f0ad2e736" />
 
 ---
 
