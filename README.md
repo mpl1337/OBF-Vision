@@ -230,3 +230,10 @@ Hinweis zu Drittkomponenten:
 - OpenVINO wird als Dependency genutzt (Apache-2.0).
 
 Siehe `LICENSE` und ggf. Hinweise im Repository.
+
+<img width="1920" height="5628" alt="screencapture-192-168-178-70-32168-gui-2026-01-20-19_51_14" src="https://github.com/user-attachments/assets/05283553-83ca-4d73-9c55-fc3eeac52a98" />
+
+<img width="1920" height="1163" alt="screencapture-192-168-178-70-32168-gui-2026-01-20-19_52_35" src="https://github.com/user-attachments/assets/56350358-5c88-4b09-93d4-55229baddbb6" />
+
+<img width="1920" height="963" alt="screencapture-192-168-178-70-32168-gui-2026-01-20-20_00_45" src="https://github.com/user-attachments/assets/68378b4c-aafb-495f-a96c-050007128e48" />
+
